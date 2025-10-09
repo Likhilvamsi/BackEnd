@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy requirements file first (for caching)
 COPY requirements.txt .
 
+RUN pip install --upgrade pip
+
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
