@@ -10,4 +10,6 @@ alembic
 apscheduler
 pytest
 httpx
+cryptography
 bcrypt
+passlib
