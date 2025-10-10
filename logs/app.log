@@ -2877,3 +2877,26 @@ WHERE barber_slots.barber_id = %(barber_id_1)s AND barber_slots.slot_date = %(sl
 2025-10-09 10:33:37,651 - INFO - fastapi-auth - Database session closed
 2025-10-09 10:37:53,389 - INFO - fastapi-auth - [OTP CLEANUP] Deleted 0 expired OTP(s) at 2025-10-09 05:07:53.385635
 2025-10-09 10:42:09,991 - INFO - fastapi-auth - Scheduler shutdown successfully.
+2025-10-10 09:47:02,525 - INFO - fastapi-auth - Database engine created successfully
+2025-10-10 09:47:02,797 - INFO - fastapi-auth - Scheduler started with OTP cleanup + Slot generator jobs
+2025-10-10 09:52:02,829 - INFO - fastapi-auth - [OTP CLEANUP] Deleted 0 expired OTP(s) at 2025-10-10 04:22:02.798837
+2025-10-10 09:52:36,716 - INFO - fastapi-auth - Scheduler shutdown successfully.
+2025-10-10 09:52:38,235 - INFO - fastapi-auth - Database engine created successfully
+2025-10-10 09:52:46,396 - INFO - fastapi-auth - Database engine created successfully
+2025-10-10 09:52:46,613 - INFO - fastapi-auth - Scheduler started with OTP cleanup + Slot generator jobs
+2025-10-10 09:53:24,085 - INFO - fastapi-auth - Scheduler shutdown successfully.
+2025-10-10 09:53:25,373 - INFO - fastapi-auth - Database engine created successfully
+2025-10-10 09:53:25,598 - INFO - fastapi-auth - Scheduler started with OTP cleanup + Slot generator jobs
+2025-10-10 09:54:09,817 - INFO - fastapi-auth - Scheduler shutdown successfully.
+2025-10-10 09:54:11,180 - INFO - fastapi-auth - Database engine created successfully
+2025-10-10 09:54:11,381 - INFO - fastapi-auth - Scheduler started with OTP cleanup + Slot generator jobs
+2025-10-10 09:54:37,522 - INFO - fastapi-auth - Creating new database session...
+2025-10-10 09:54:37,556 - INFO - fastapi-auth - Database session closed
+2025-10-10 09:54:57,463 - INFO - fastapi-auth - Creating new database session...
+2025-10-10 09:54:57,468 - ERROR - fastapi-auth - Error during DB session: 404: No shops found for owner_id 122
+2025-10-10 09:54:57,471 - INFO - fastapi-auth - Database session closed
+2025-10-10 09:55:06,455 - INFO - fastapi-auth - Creating new database session...
+2025-10-10 09:55:06,462 - INFO - fastapi-auth - Database session closed
+2025-10-10 09:59:11,407 - INFO - fastapi-auth - [OTP CLEANUP] Deleted 0 expired OTP(s) at 2025-10-10 04:29:11.402122
+2025-10-10 10:04:11,394 - INFO - fastapi-auth - [OTP CLEANUP] Deleted 0 expired OTP(s) at 2025-10-10 04:34:11.390973
+2025-10-10 10:08:59,645 - INFO - fastapi-auth - Scheduler shutdown successfully.

@@ -139,8 +139,32 @@ class ShopService:
             "shop_id": shop_id,
             "booked_slots": booked_slots
         }
-from sqlalchemy.orm import Session
-from src.db.models import Shop
-from src.schemas.shop_schemas import ShopCreate
-from fastapi import HTTPException
+    
+
+    @staticmethod
+    def get_shops_by_owner(db: Session, owner_id: int):
+        """
+        Fetch all shops belonging to a specific owner.
+        """
+        from src.db.models import Shop
+
+        shops = db.query(Shop).filter(Shop.owner_id == owner_id).all()
+
+        if not shops:
+            raise HTTPException(status_code=404, detail=f"No shops found for owner_id {owner_id}")
+
+        return [
+            {
+                "shop_id": shop.shop_id,
+                "shop_name": shop.shop_name,
+                "address": shop.address,
+                "city": shop.city,
+                "state": shop.state,
+                "open_time": str(shop.open_time),
+                "close_time": str(shop.close_time),
+                "is_open": shop.is_open,
+            }
+            for shop in shops
+        ]
+
 
