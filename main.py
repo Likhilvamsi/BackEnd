@@ -13,12 +13,6 @@ from src.routes.slot_generator import generate_barber_slots
 from src.routes.booking_routes import router as booking_router
 from fastapi.middleware.cors import CORSMiddleware
 
-# Add CORS middleware - PUT THIS RIGHT AFTER app = FastAPI()
-
-
-# ... rest of your code
-
-
 
 # Create all tables if not exist
 Base.metadata.create_all(bind=engine)
@@ -66,7 +60,7 @@ scheduler = BackgroundScheduler()
 def start_scheduler():
     try:
         # OTP Cleanup Job
-        scheduler.add_job(
+        scheduler.add_job( 
             delete_expired_otps,
             "interval",
             minutes=5,

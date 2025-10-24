@@ -38,33 +38,29 @@ class Shop(Base):
 
 
 class Barber(Base):
-        __tablename__ = "barbers"
-        
-        barber_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-        barber_name = Column(String(200), nullable=False)
-        shop_id = Column(Integer, ForeignKey("shops.shop_id"), nullable=False)
-        start_time = Column(Time, nullable=False)
-        end_time = Column(Time, nullable=False)
-        is_available = Column(Boolean, default=True)
-        created_at = Column(DateTime, default=datetime.utcnow)
-        
-        shop = relationship("Shop", back_populates="barbers")
-        slots = relationship("BarberSlot", back_populates="barber", cascade="all, delete")
+    __tablename__ = "barbers"
 
-    
-        availability = relationship(
-        "BarberAvailability",
-        back_populates="barber",
-        cascade="all, delete"
-    )
+    barber_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    barber_name = Column(String(200), nullable=False)
+    shop_id = Column(Integer, ForeignKey("shops.shop_id", ondelete="CASCADE"), nullable=False)
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
+    is_available = Column(Boolean, default=True)
+    generate_daily = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    shop = relationship("Shop", back_populates="barbers")
+    slots = relationship("BarberSlot", back_populates="barber", cascade="all, delete")
+    availability = relationship("BarberAvailability", back_populates="barber", cascade="all, delete")
+
 
 
 class BarberSlot(Base):
     __tablename__ = "barber_slots"
 
     slot_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    barber_id = Column(Integer, ForeignKey("barbers.barber_id"), nullable=False)
-    shop_id = Column(Integer, ForeignKey("shops.shop_id"), nullable=False)  # ✅ ADD THIS
+    barber_id = Column(Integer, ForeignKey("barbers.barber_id", ondelete="CASCADE"), nullable=False)
+    shop_id = Column(Integer, ForeignKey("shops.shop_id", ondelete="CASCADE"), nullable=False) 
+
     slot_date = Column(Date, nullable=False)
     slot_time = Column(Time, nullable=False)
     is_booked = Column(Boolean, default=False)
@@ -76,12 +72,13 @@ class BarberSlot(Base):
 
 class Booking(Base):
     __tablename__ = "bookings"
-    
+
     booking_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    barber_id = Column(Integer, ForeignKey("barbers.barber_id"), nullable=False)
-    shop_id = Column(Integer, ForeignKey("shops.shop_id"), nullable=False)
-    slot_id = Column(Integer, ForeignKey("barber_slots.slot_id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    barber_id = Column(Integer, ForeignKey("barbers.barber_id", ondelete="CASCADE"), nullable=False)
+    shop_id = Column(Integer, ForeignKey("shops.shop_id", ondelete="CASCADE"), nullable=False)
+    slot_id = Column(Integer, ForeignKey("barber_slots.slot_id", ondelete="CASCADE"), nullable=False)
+
     booking_date = Column(Date, nullable=False)
     booking_time = Column(Time, nullable=False)
     status = Column(String(20), default="booked")

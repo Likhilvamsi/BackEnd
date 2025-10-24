@@ -1,14 +1,14 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from src.db.models import Barber, BarberAvailability
+from src.db.models import Barber
 from src.schemas.availability_schemas import BarberAvailabilityCreate
 
 class BarberAvailabilityService:
     @staticmethod
     def add_or_update_availability(db: Session, barber_id: int, data: BarberAvailabilityCreate):
         """
-        Adds or updates barber availability after validating the barber.
+        Adds or updates barber availability directly in the `barbers` table.
         """
         try:
             # Check if barber exists
@@ -19,45 +19,25 @@ class BarberAvailabilityService:
                     detail=f"Barber with ID {barber_id} not found"
                 )
 
-            #  Validate shop ownership (optional)
+            # Optional: Validate shop ownership
             if hasattr(data, "shop_id") and barber.shop_id != data.shop_id:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Barber does not belong to this shop"
                 )
 
-            #  Check if availability already exists
-            record = db.query(BarberAvailability).filter(
-                BarberAvailability.barber_id == barber_id,
-                BarberAvailability.available_date == data.available_date
-            ).first()
-
-            if record:
-                record.start_time = data.start_time
-                record.end_time = data.end_time
-                record.is_available = data.is_available
-                db.commit()
-                db.refresh(record)
-                return {
-                    "msg": "Availability updated successfully",
-                    "availability_id": record.id
-                }
-
-            #  Create new record
-            new_record = BarberAvailability(
-                barber_id=barber_id,
-                available_date=data.available_date,
-                start_time=data.start_time,
-                end_time=data.end_time,
-                is_available=data.is_available
-            )
-            db.add(new_record)
+            # Update barber record directly
+            barber.start_time = data.start_time
+            barber.end_time = data.end_time
+            barber.is_available = data.is_available
+            if hasattr(data, "generate_daily"):
+                barber.generate_daily = data.generate_daily
             db.commit()
-            db.refresh(new_record)
+            db.refresh(barber)
 
             return {
-                "msg": "Availability added successfully",
-                "availability_id": new_record.id
+                "msg": "Barber availability updated successfully",
+                "barber_id": barber.barber_id
             }
 
         except IntegrityError as e:
