@@ -1,0 +1,43 @@
+name: Deploy FastAPI to Azure VM
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Test Build
+      run: python -m py_compile $(git ls-files '*.py')
+
+    - name: Deploy Over SSH
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.AZURE_VM_HOST }}
+        username: ${{ secrets.AZURE_VM_USERNAME }}
+        key: ${{ secrets.AZURE_VM_SSH_KEY }}
+        source: "."
+        target: ${{ secrets.BACKEND_PATH }}
+
+    - name: Restart Backend Service
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.AZURE_VM_HOST }}
+        username: ${{ secrets.AZURE_VM_USERNAME }}
+        key: ${{ secrets.AZURE_VM_SSH_KEY }}
+        script: |
+          sudo systemctl restart fastapi.service
