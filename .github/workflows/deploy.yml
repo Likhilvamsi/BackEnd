@@ -9,18 +9,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout code from repo
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to VM via SSH
+      # Step 2: Copy project files to VM
+      - name: Deploy to VM via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST }}        # e.g. 135.237.191.7
+          username: ${{ secrets.SSH_USER }}    # e.g. azureuser
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # private key from GitHub secret
           source: "."
           target: "~/app/backend/"
+          overwrite: true                      # optional: overwrite existing files
+          rm: false                            # keep old files if needed
+          timeout: 60s
 
+      # Step 3: Install dependencies and restart FastAPI
       - name: Run Backend on VM
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -28,6 +34,14 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            echo "🔹 Deploying FastAPI Backend..."
             cd ~/app/backend
+            # Optional: activate virtual environment if you use one
+            # source venv/bin/activate
+            echo "🔹 Installing dependencies..."
             pip3 install -r requirements.txt
-            nohup uvicorn main:app --host 0.0.0.0 --port 8000 --reload > backend.log 2>&1 &
+            echo "🔹 Stopping any existing FastAPI process..."
+            pkill -f uvicorn || true
+            echo "🔹 Starting FastAPI..."
+            nohup uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+            echo "✅ FastAPI started successfully."
