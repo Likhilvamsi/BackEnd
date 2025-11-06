@@ -12,16 +12,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Clean up unnecessary files before transfer
+      - name: Remove unnecessary files
+        run: |
+          rm -rf .git __pycache__ *.log .github
+
+      # Copy only required backend files
       - name: Deploy to VM via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "."
+          source: "./*"
           target: "~/app/backend/"
           overwrite: true
 
+      # Install dependencies and restart backend
       - name: Run Backend on VM
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -29,19 +36,16 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "🔹 Updating packages..."
+            echo "🔹 Installing Python..."
             sudo apt update -y
-            echo "🔹 Installing Python & pip3..."
             sudo apt install -y python3 python3-pip python3-venv
             echo "🔹 Deploying FastAPI Backend..."
             cd ~/app/backend
-            echo "🔹 Creating virtual environment..."
             python3 -m venv venv
             source venv/bin/activate
-            echo "🔹 Installing dependencies..."
             pip install --upgrade pip
             pip install -r requirements.txt
-            echo "🔹 Restarting FastAPI..."
             pkill -f uvicorn || true
             nohup ./venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
             echo "✅ FastAPI started successfully."
+
