@@ -29,3 +29,12 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🔹 Deploying new FastAPI version..."
+            cd ~/app/backend
+            sudo systemctl daemon-reload
+            sudo systemctl restart fastapi
+            sudo systemctl status fastapi --no-pager
+            echo "✅ FastAPI restarted successfully via systemd."
