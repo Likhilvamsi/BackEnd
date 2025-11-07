@@ -6,7 +6,7 @@ class UserCreate(BaseModel):
     email: str
     password: str
     phone_number: str | None = None
-    role: Literal["customer", "owner"] = "customer"  
+    role: Literal["customer", "Owner"] = "customer"  
 
 class OTPRequest(BaseModel):
     email: EmailStr
